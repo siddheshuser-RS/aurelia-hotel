@@ -168,7 +168,7 @@ export default function RoomDetailsPage() {
 
           {/* What's included callout */}
           <div className="mt-8 glass rounded-2xl p-5">
-            <h3 className="font-heading text-xl">What's Included</h3>
+            <h3 className="font-heading text-xl">What&apos;s Included</h3>
             <ul className="mt-3 grid gap-2 text-sm text-white/65 sm:grid-cols-2">
               {["Daily butler service", "Complimentary breakfast", "Airport transfer", "In-suite dining 24/7", "Spa & wellness access", "Personal concierge"].map((item) => (
                 <li key={item} className="flex items-center gap-2">

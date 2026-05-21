@@ -35,7 +35,7 @@ export default function AboutPage() {
           <p className="text-xs uppercase tracking-[0.35em] text-gold">Our Story</p>
           <h1 className="mt-2 font-heading text-6xl">Built for Visionaries of Luxury</h1>
           <p className="mt-5 max-w-3xl text-lg text-white/65 leading-relaxed">
-            Aurelia is inspired by the world's most iconic hospitality brands, combining architectural drama,
+            Aurelia is inspired by the world&apos;s most iconic hospitality brands, combining architectural drama,
             intuitive service, and emotionally rich design to create a singular destination that transcends the ordinary.
           </p>
         </AnimatedSection>
