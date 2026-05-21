@@ -1,0 +1,141 @@
+# =============================================================================
+# Aurelia Hotel – Continuous Integration (CI)
+#
+# 📚 WHAT THIS FILE DOES
+#   Every time someone pushes code or opens a Pull Request, GitHub spins up
+#   a fresh Linux VM, installs our dependencies, and verifies the code:
+#     - backend  : TypeScript compiles cleanly (catches type errors)
+#     - frontend : ESLint passes  +  TypeScript compiles cleanly
+#
+#   If anything fails, the PR shows a red ❌ and (once we enable the rule)
+#   GitHub will block the merge until it's fixed.
+#
+# 📚 STRUCTURE REMINDER
+#   workflow → triggered by events → runs one or more jobs → each job runs steps
+#
+# 📍 FILE LOCATION
+#   This file MUST live at  .github/workflows/<anything>.yml  for GitHub to find it.
+# =============================================================================
+
+# Human-friendly name shown in the GitHub "Actions" tab.
+name: CI
+
+# ── TRIGGERS ─────────────────────────────────────────────────────────────────
+# Tell GitHub *when* to run this workflow.
+on:
+  # Run on every push to the main branch (after a PR is merged, etc.)
+  push:
+    branches: [main]
+  # Run on every pull request that *targets* main (this is the important one —
+  # it lets us catch problems BEFORE code reaches main).
+  pull_request:
+    branches: [main]
+  # Allow manual runs from the Actions tab (handy for debugging).
+  workflow_dispatch:
+
+# ── CONCURRENCY ──────────────────────────────────────────────────────────────
+# If you push twice quickly to the same branch, cancel the older run.
+# Saves CI minutes and stops two runs from racing each other.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ── PERMISSIONS ──────────────────────────────────────────────────────────────
+# Principle of least privilege: this workflow only needs to READ the repo.
+# Locking permissions down is a security best practice.
+permissions:
+  contents: read
+
+# ── JOBS ─────────────────────────────────────────────────────────────────────
+# Each "job" runs on its own fresh VM. Jobs run in PARALLEL by default,
+# which makes the whole pipeline fast.
+jobs:
+
+  # ===========================================================================
+  # JOB 1: Backend checks
+  # ===========================================================================
+  backend:
+    name: Backend · install + typecheck
+    runs-on: ubuntu-latest          # free Ubuntu VM provided by GitHub
+
+    # `defaults.run.working-directory` makes every `run:` step start inside
+    # the backend/ folder. Saves us writing `cd backend &&` everywhere.
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      # ── 1. Get the code onto the VM ─────────────────────────────────────
+      # actions/checkout is an "action" — a reusable pre-packaged step.
+      # @v4 pins the major version (safe + auto-receives bug fixes).
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Install Node.js on the VM ────────────────────────────────────
+      # actions/setup-node installs the Node version we ask for AND wires
+      # up dependency caching so subsequent runs are much faster.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'        # LTS — matches your Dockerfile base image
+          cache: 'npm'              # cache ~/.npm based on package-lock.json
+          cache-dependency-path: backend/package-lock.json
+
+      # ── 3. Install dependencies ─────────────────────────────────────────
+      # `npm ci` (Clean Install) is the CI-friendly version of `npm install`:
+      #   - requires a package-lock.json
+      #   - installs EXACT versions from the lockfile (reproducible)
+      #   - wipes node_modules first (no stale state)
+      #   - faster than `npm install`
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Generate Prisma client ───────────────────────────────────────
+      # Your code imports types from @prisma/client. Those types are CODE-
+      # GENERATED from prisma/schema.prisma at install time. Without this,
+      # `tsc` will explode with "Cannot find name 'User'" etc.
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # ── 5. Typecheck ────────────────────────────────────────────────────
+      # `tsc --noEmit` runs the TypeScript compiler in "check only" mode.
+      # No JS files are produced — we just want to know if the types are OK.
+      # This is the fastest, cheapest way to catch a huge class of bugs.
+      - name: TypeScript typecheck
+        run: npx tsc --noEmit -p tsconfig.json
+
+  # ===========================================================================
+  # JOB 2: Frontend checks
+  # ===========================================================================
+  frontend:
+    name: Frontend · install + lint + typecheck
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Lint ────────────────────────────────────────────────────────────
+      # `next lint` runs ESLint with the Next.js preset.
+      # Style + best-practice violations show up here.
+      - name: ESLint
+        run: npm run lint
+
+      # ── Typecheck ───────────────────────────────────────────────────────
+      # Same idea as the backend.
+      - name: TypeScript typecheck
+        run: npx tsc --noEmit
