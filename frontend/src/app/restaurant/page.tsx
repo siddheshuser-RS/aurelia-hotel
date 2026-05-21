@@ -77,7 +77,7 @@ export default async function RestaurantPage() {
                 className="object-cover transition duration-500 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#11162a]/80 to-transparent" />
-              <p className="absolute bottom-4 left-4 text-xs uppercase tracking-[0.2em] text-[#ffd783]">Chef's Selection</p>
+              <p className="absolute bottom-4 left-4 text-xs uppercase tracking-[0.2em] text-[#ffd783]">Chef&apos;s Selection</p>
             </div>
           </AnimatedSection>
         ))}

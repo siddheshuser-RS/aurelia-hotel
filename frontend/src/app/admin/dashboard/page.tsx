@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { DollarSign, BedDouble, CalendarCheck, Image, Star, MessageSquare } from "lucide-react";
+import { DollarSign, BedDouble, CalendarCheck, Image as ImageIcon, Star, MessageSquare } from "lucide-react";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { getApiErrorMessage, hotelApi } from "@/lib/api";
 import { Booking } from "@/lib/types";
@@ -64,7 +64,7 @@ export default function AdminDashboardPage() {
     { label: "Pending", value: stats.pending, icon: <CalendarCheck size={20} />, href: "/admin/dashboard/bookings", highlight: true },
     { label: "Total Revenue", value: `$${stats.revenue.toLocaleString()}`, icon: <DollarSign size={20} />, href: "/admin/dashboard/bookings", big: true },
     { label: "Testimonials", value: stats.testimonials, icon: <Star size={20} />, href: "/admin/dashboard/testimonials" },
-    { label: "Gallery Items", value: stats.gallery, icon: <Image size={20} />, href: "/admin/dashboard/gallery" }
+    { label: "Gallery Items", value: stats.gallery, icon: <ImageIcon size={20} />, href: "/admin/dashboard/gallery" }
   ];
 
   return (

@@ -103,7 +103,7 @@ export default function AdminBookingsPage() {
                   {new Date(b.checkOut).toLocaleDateString()} · {b.guests} guests
                 </p>
                 {b.guestPhone && <p className="text-xs text-white/50">📞 {b.guestPhone}</p>}
-                {b.notes && <p className="mt-1 text-xs italic text-white/50">"{b.notes}"</p>}
+                {b.notes && <p className="mt-1 text-xs italic text-white/50">&quot;{b.notes}&quot;</p>}
                 <p className="mt-1 text-xs text-gold">${Number(b.totalPrice).toLocaleString()}</p>
               </div>
               <span
