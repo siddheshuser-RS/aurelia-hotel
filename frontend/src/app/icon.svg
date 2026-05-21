@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aurelia Hotel icon">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7df9c" />
+      <stop offset="100%" stop-color="#c99a37" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#101522" />
+  <path d="M32 12 48 52h-8l-3.5-9H27.5L24 52h-8zm1.5 15.5-3.3 8.8h6.7z" fill="url(#gold)" />
+</svg>

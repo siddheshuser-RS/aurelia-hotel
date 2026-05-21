@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --bg-ink: #0b1320;
+  --bg-nocturne: #101b2d;
+  --bg-velvet: #1b1424;
+  --bg-warm: #26161c;
+  --gold: #d3b06b;
+  --gold-soft: #e8c988;
+  --ivory: #f8f4ec;
+  --muted: #d6cfc1;
+}
+
+body {
+  @apply text-ivory font-body antialiased;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 6% 4%, rgba(232, 201, 136, 0.24), transparent 24%),
+    radial-gradient(circle at 92% 12%, rgba(119, 152, 206, 0.22), transparent 30%),
+    radial-gradient(circle at 50% 86%, rgba(128, 76, 76, 0.24), transparent 38%),
+    linear-gradient(130deg, var(--bg-ink) 0%, var(--bg-nocturne) 42%, var(--bg-velvet) 72%, var(--bg-warm) 100%);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 52px 52px;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.glass {
+  @apply border border-white/15 backdrop-blur-xl;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+}
+
+.section-wrap {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.heading-luxury {
+  @apply font-heading tracking-wide text-4xl sm:text-5xl md:text-6xl;
+}
+
+.editorial-kicker {
+  @apply text-[0.7rem] uppercase tracking-[0.42em] text-gold;
+}
+
+.luxury-panel {
+  @apply rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 to-white/[0.03] p-6 shadow-glass;
+}
+
+.gold-sheen {
+  background: linear-gradient(90deg, rgba(211, 176, 107, 0), rgba(211, 176, 107, 0.95), rgba(211, 176, 107, 0));
+}
+
+.gold-chip {
+  @apply rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[0.7rem] uppercase tracking-[0.2em] text-gold;
+}
+
+/* Skeleton pulse */
+@keyframes skeleton-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes cinematic-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cinematic-fade-up {
+  animation: cinematic-fade-up 680ms ease forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1a2b46; }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.6); }
+
+/* Gold divider */
+.divider-gold {
+  @apply h-px w-16 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto my-4;
+}
