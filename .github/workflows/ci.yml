@@ -139,3 +139,70 @@ jobs:
       # Same idea as the backend.
       - name: TypeScript typecheck
         run: npx tsc --noEmit
+    
+  # ===========================================================================
+  # JOB 3: Backend Docker image build
+  # Verifies backend/Dockerfile builds successfully. Does NOT push anywhere.
+  # ===========================================================================
+  docker-backend:
+    name: Backend · docker build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Get the code onto the runner (same as other jobs).
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Buildx is Docker's modern builder. The official build-push-action
+      # below requires it. It also unlocks layer caching from GitHub.
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Official Docker action: builds (and optionally pushes) an image.
+      # We set push:false → image is built then thrown away. We only want
+      # to confirm the Dockerfile is valid.
+      # cache-from / cache-to use GitHub Actions' free cache so re-runs
+      # are fast (first build ~3min, cached build ~30s).
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          load: false
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,scope=backend,mode=max
+
+# =============================================================================
+
+  # ===========================================================================
+  # JOB 4: Frontend Docker image build
+  # Same idea as Job 3 but for the Next.js frontend.
+  # IMPORTANT: Next.js bakes NEXT_PUBLIC_* env vars into the JS bundle
+  # at build time, so frontend/Dockerfile expects them as build-args.
+  # In CI we pass a placeholder — the build only needs to succeed, not run.
+  # ===========================================================================
+  docker-frontend:
+    name: Frontend · docker build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
+          load: false
+          # Match the ARG declared at the top of frontend/Dockerfile.
+          # CI just needs a syntactically valid value — it's never called.
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=http://localhost:5001/api
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
