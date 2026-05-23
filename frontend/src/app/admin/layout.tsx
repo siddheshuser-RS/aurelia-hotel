@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
@@ -18,7 +18,13 @@ const NAV = [
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/admin/login");
+  };
 
   if (pathname === "/admin/login") {
     return <div className="section-wrap py-20">{children}</div>;
@@ -48,7 +54,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <button onClick={logout} className="mt-5 text-sm text-gold hover:underline">
+          <button onClick={handleLogout} className="mt-5 text-sm text-gold hover:underline">
             Logout
           </button>
         </aside>
